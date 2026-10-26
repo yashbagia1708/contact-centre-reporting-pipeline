@@ -1,0 +1,29 @@
+queue_key,queue_id,brand,queue_function,sl_target_sec,sl_target_pct,note
+rb4sales,RIDGEBACK_SALES,Ridgeback 4WD,Sales,30,0.8,
+ridgebacksales,RIDGEBACK_SALES,Ridgeback 4WD,Sales,30,0.8,
+rb4svc,RIDGEBACK_POLICY_SERVICE,Ridgeback 4WD,Policy Service,60,0.8,
+ridgebackservice,RIDGEBACK_POLICY_SERVICE,Ridgeback 4WD,Policy Service,60,0.8,
+rb4clmlodge,RIDGEBACK_CLAIMS_LODGEMENT,Ridgeback 4WD,Claims Lodgement,60,0.8,
+ridgebackclaimslodge,RIDGEBACK_CLAIMS_LODGEMENT,Ridgeback 4WD,Claims Lodgement,60,0.8,
+rb4clmenq,RIDGEBACK_CLAIMS_ENQUIRY,Ridgeback 4WD,Claims Enquiry,60,0.8,
+ridgebackclaimsenquiry,RIDGEBACK_CLAIMS_ENQUIRY,Ridgeback 4WD,Claims Enquiry,60,0.8,
+rb4billing,RIDGEBACK_BILLING,Ridgeback 4WD,Billing,60,0.8,
+ridgebackpayments,RIDGEBACK_BILLING,Ridgeback 4WD,Billing,60,0.8,
+rb4retention,RIDGEBACK_RETENTION,Ridgeback 4WD,Retention,30,0.8,
+ridgebackretain,RIDGEBACK_RETENTION,Ridgeback 4WD,Retention,30,0.8,
+rb4clmstorm,RIDGEBACK_CLAIMS_LODGEMENT,Ridgeback 4WD,Claims Lodgement,60,0.8,Storm overflow queue opened 13/10/2026
+wfisales,WAYFARER_SALES,Wayfarer Insurance,Sales,30,0.8,
+wayfarersales,WAYFARER_SALES,Wayfarer Insurance,Sales,30,0.8,
+wfisvc,WAYFARER_POLICY_SERVICE,Wayfarer Insurance,Policy Service,60,0.8,
+wayfarerservice,WAYFARER_POLICY_SERVICE,Wayfarer Insurance,Policy Service,60,0.8,
+wficlmlodge,WAYFARER_CLAIMS_LODGEMENT,Wayfarer Insurance,Claims Lodgement,60,0.8,
+wayfarerclaimslodge,WAYFARER_CLAIMS_LODGEMENT,Wayfarer Insurance,Claims Lodgement,60,0.8,
+wficlmenq,WAYFARER_CLAIMS_ENQUIRY,Wayfarer Insurance,Claims Enquiry,60,0.8,
+wayfarerclaimsenquiry,WAYFARER_CLAIMS_ENQUIRY,Wayfarer Insurance,Claims Enquiry,60,0.8,
+wfibilling,WAYFARER_BILLING,Wayfarer Insurance,Billing,60,0.8,
+wayfarerpayments,WAYFARER_BILLING,Wayfarer Insurance,Billing,60,0.8,
+wfiretention,WAYFARER_RETENTION,Wayfarer Insurance,Retention,30,0.8,
+wayfarerretain,WAYFARER_RETENTION,Wayfarer Insurance,Retention,30,0.8,
+wficlmstorm,WAYFARER_CLAIMS_LODGEMENT,Wayfarer Insurance,Claims Lodgement,60,0.8,Storm overflow queue opened 13/10/2026
+rb4unlinked,RIDGEBACK_UNLINKED,Ridgeback 4WD,Not linked to a call,60,0.8,CRM cases with no matching call in telephony: grouped by the CRM brand (no calls ever land here)
+wfiunlinked,WAYFARER_UNLINKED,Wayfarer Insurance,Not linked to a call,60,0.8,CRM cases with no matching call in telephony: grouped by the CRM brand (no calls ever land here)
