@@ -15,7 +15,7 @@ command (or one button).
 | Time | What to look at |
 |---|---|
 | **5 min** | [What October shows](#what-october-shows) and [the dashboard](#the-dashboard) |
-| **20 min** | [Run it yourself](#run-it-yourself) in the [Refresh Console](#refresh-console): load September, refresh October, watch every stage, then repoint and refresh the included Power BI report |
+| **20 min** | [Run it yourself](#run-it-yourself) in the [Refresh Console](#refresh-console): load September, refresh October, watch every stage, then point the included Power BI report at it and refresh |
 | **No install** | [Open it in your browser](#no-docker-run-it-in-your-browser-with-github-codespaces) with Codespaces, Refresh Console included, or [rerun it on GitHub Actions](#or-just-watch-the-pipeline-run-on-github-actions) with one click |
 | **Deeper** | [How it works](#how-it-works), the [data problems it handles](#the-mess-it-handles), [SQL](sql/), [DAX](powerbi/measures.dax) |
 
@@ -55,8 +55,8 @@ header and accents take on Wayfarer blue or Ridgeback rust when a brand is picke
 **Customers & Sales**: repeat contacts by reason, product sales and premium, NPS by queue, what unhappy customers said.
 ![Customers and sales](docs/dashboard_customers.png)
 
-The report ships with **September** loaded ([before](docs/overview_september.png)). Repoint it once to your own
-output ([steps](#then-power-bi)), load October, click Refresh, and it moves to October.
+The report ships with **September** loaded ([before](docs/overview_september.png)). Point it at your own output
+([one setting](#then-power-bi)), load October, click Refresh, and it moves to October.
 
 ## Run it yourself
 
@@ -102,18 +102,11 @@ Shortcuts: ⌘R / Ctrl+R refresh, ⌘⇧F / Ctrl+Shift+F start fresh.
 Open [`powerbi/contact_centre.pbix`](powerbi/contact_centre.pbix) in Power BI Desktop. It opens on **September** and
 every page works straight away.
 
-**Before you click Refresh, repoint it to your own output (one time, about 2 minutes).** The report was built in
-Power BI web against the author's OneDrive, so its 8 queries still point there; Refresh would ask for a sign-in you
-don't have. Point them at the workbook the pipeline wrote on your machine:
+**Point it at your own output (one setting, under a minute).** All 8 queries read one parameter, `ModelFile`:
 
-1. **Home → Transform data**. In the Power Query Editor, select the `Agent` query, then its **Source** step under
-   *Applied steps*.
-2. Replace the formula in the formula bar with this, using the path of your clone:
-   ```
-   = Excel.Workbook(File.Contents("C:\contact-centre-reporting-pipeline\output\powerbi\contact_centre_model.xlsx"), null, true)
-   ```
-3. Do the same for `Calls`, `Date`, `Forecast`, `Interactions`, `Queue`, `RefreshLog` and `Surveys`.
-4. **Close & Apply** (choose *Organizational* if asked about privacy levels).
+1. **Home → Transform data → Edit parameters**.
+2. Set **ModelFile** to the workbook the pipeline wrote in your clone, for example
+   `C:\contact-centre-reporting-pipeline\output\powerbi\contact_centre_model.xlsx`, then **OK** and **Apply changes**.
 
 Now the loop works: **Run monthly refresh** in the Refresh Console (or `make refresh`), then **Refresh** in Power BI,
 and the report rolls forward to October on its own. More detail: [`POWERBI_SETUP.md`](powerbi/POWERBI_SETUP.md#using-the-included-report-contact_centrepbix).

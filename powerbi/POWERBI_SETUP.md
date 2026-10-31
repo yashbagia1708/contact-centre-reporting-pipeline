@@ -24,18 +24,13 @@ Customers & Sales) with **September** loaded, as it stood before the October fil
 Desktop** and every page works straight away (month-on-month shows "--": there is no August). Connect it to your
 own pipeline as below, run the October refresh, click Refresh, and watch it roll forward to October.
 
-It was built in Power BI web against the workbook in OneDrive, so its 8 queries still point at that OneDrive
-address. To connect it to **your own** pipeline runs instead:
+All 8 queries read one parameter, `ModelFile`, the path to the model workbook. To connect it to **your own**
+pipeline runs:
 
-1. **Home → Transform data**. In the Power Query Editor, select `Agent`, then its **Source** step under
-   *Applied steps*.
-2. Replace the formula in the formula bar with (use your clone's path):
-   ```
-   = Excel.Workbook(File.Contents("C:\contact-centre-reporting-pipeline\output\powerbi\contact_centre_model.xlsx"), null, true)
-   ```
-3. Do the same for `Calls`, `Date`, `Forecast`, `Interactions`, `Queue`, `RefreshLog` and `Surveys` (paste the same
-   formula; only the Source step changes).
-4. **Close & Apply**. If asked about privacy levels, choose *Organizational*.
+1. **Home → Transform data → Edit parameters**.
+2. Set **ModelFile** to the workbook in your clone, for example
+   `C:\contact-centre-reporting-pipeline\output\powerbi\contact_centre_model.xlsx`.
+3. **OK**, then **Apply changes** (choose *Organizational* if asked about privacy levels).
 
 From then on the monthly loop is: `make refresh` (or **Run monthly refresh** in `python app.py`), then **Home →
 Refresh** in Power BI. Run `make setup` first and the report shows September only; refresh after October loads and
