@@ -62,7 +62,7 @@ STEPS = [
      "Either everything lands or nothing does, and re-running a month never double counts."),
     ("export", "Power BI model",
      "Every model table is written to one workbook (one Excel table each) and swapped in atomically, so "
-     "OneDrive never syncs a half-written file. The Power BI semantic model just refreshes."),
+     "Power BI (or a sync tool like OneDrive) never reads a half-written file. The Power BI semantic model just refreshes."),
     ("kpi_pack", "KPI pack",
      "A formatted monthly Excel pack with month-on-month deltas, daily queue performance, agent scorecard, "
      "contact reasons and a data quality tab, for people who don't open Power BI."),
@@ -72,8 +72,8 @@ STEPS = [
     ("powerbi", "Refresh Power BI",
      "The pipeline's job ends when the model workbook is written. Power BI then pulls it in; nothing pushes to it.\n\n"
      "• Power BI Desktop: open the .pbix (button on the left) and click Home → Refresh.\n"
-     "• Power BI web with the workbook in OneDrive: open the semantic model and click Refresh now, or let its "
-     "scheduled refresh pick it up.\n\n"
+     "• Power BI web (on a Mac, with EXPORT_DIR pointed at OneDrive): open the semantic model and click "
+     "Refresh now, or let its scheduled refresh pick it up.\n\n"
      "Why it's manual here: triggering a refresh from code needs the Power BI REST API with an app registered in "
      "the organisation's Microsoft Entra ID, and Desktop can't be triggered at all. In production, the last step of "
      "this pipeline would call that API (or the whole flow would run as a Fabric pipeline), so the report updates "

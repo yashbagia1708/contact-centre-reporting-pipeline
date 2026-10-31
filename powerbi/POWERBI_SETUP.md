@@ -5,15 +5,16 @@ Power BI reads that workbook. Because the pipeline overwrites the same file unde
 **the semantic model is built once and then refreshes itself**.
 
 ```
-python pipeline ──▶ OneDrive/Contact_Centre/powerbi/contact_centre_model.xlsx ──▶ Power BI semantic model ──▶ report
-                     (overwritten each refresh)                                       (OneDrive sync, ~hourly,
-                                                                                       or "Refresh now")
+python pipeline ──▶ output/powerbi/contact_centre_model.xlsx ──▶ Power BI semantic model ──▶ report
+                     (overwritten each refresh)                    (Desktop: Home → Refresh;
+                                                                    web: workbook in OneDrive, see Option B)
 ```
 
-Why a workbook in OneDrive rather than a live MySQL connection: the Power BI service can only reach a database
-on a laptop through an on-premises data gateway, and the gateway runs on Windows only. A file in OneDrive for
-work or school is reached cloud-to-cloud, so no gateway is needed. In production, the same model would point
-at the warehouse (or a gateway) instead. Only the source step changes; the measures and report stay the same.
+Why a workbook rather than a live MySQL connection: a file works the same in Power BI Desktop and Power BI web, and
+anyone trying it needs nothing but the pipeline's output. (The Power BI service can only reach a database on a laptop
+through an on-premises data gateway, which runs on Windows only; a workbook in OneDrive gets round that, see
+Option B.) In production, the same model would point at the warehouse (or a gateway) instead. Only the source step
+changes; the measures and report stay the same.
 
 ---
 
@@ -38,30 +39,43 @@ the Month slicer's *Latest month* moves to October by itself.
 
 ---
 
-## Option A: Power BI web (works on a Mac)
+## Building the model yourself
 
-### 1. Point the pipeline at OneDrive
-In `.env`, set the export folder to a folder inside your synced OneDrive (work/school account, the same one you
-sign in to Power BI with):
+### 1. Get the data in
+
+**Option A: Power BI Desktop (Windows)**
+
+- **Get data → Excel workbook** → `output/powerbi/contact_centre_model.xlsx`; or
+- **Get data → MySQL database** → server `localhost:3308`, database `contact_centre`. Import the tables
+  directly (the queries in `sql/exports/` show exactly what each model table contains).
+
+Tick all tables: `Calls`, `Interactions`, `Surveys`, `Forecast`, `Date`, `Agent`, `Queue`, `RefreshLog`
+(optional: `AgentScorecard`, `Heatmap`, which are pre-computed SQL views kept for reconciliation).
+
+**Option B: Power BI web (works on a Mac)**
+
+Power BI web can't read a file on your laptop, so the pipeline writes the workbook into OneDrive instead and the
+service reads it cloud-to-cloud, with no gateway. In `.env`, point the outputs at a folder inside your synced OneDrive
+(work/school account, the same one you sign in to Power BI with):
 
 ```
 EXPORT_DIR=~/Library/CloudStorage/OneDrive-<YourOrg>/Contact_Centre/powerbi
 REPORT_DIR=~/Library/CloudStorage/OneDrive-<YourOrg>/Contact_Centre/reports
 ```
 
-Run `make setup` (loads September). Wait until OneDrive shows the file as synced.
+Run `make setup` (loads September). Wait until OneDrive shows the file as synced. Then:
 
-### 2. Create the semantic model
 1. Go to app.powerbi.com, open a workspace (My workspace is fine).
 2. **New item → Semantic model → Excel** → **OneDrive** → pick `contact_centre_model.xlsx`.
-3. Tick all tables: `Calls`, `Interactions`, `Surveys`, `Forecast`, `Date`, `Agent`, `Queue`, `RefreshLog`
-   (optional: `AgentScorecard`, `Heatmap`, which are pre-computed SQL views kept for reconciliation).
+3. Tick the tables listed under Option A.
 4. Choose **Create a semantic model only**. Name it `Contact Centre`.
 
 If Excel isn't offered in that list, open any semantic model's **Get data**, choose **Excel workbook**, and paste
 the file's OneDrive link (Organisational account sign-in). It's still a cloud source, so no gateway is needed.
 
-### 3. Model it (semantic model → **Open semantic model** → switch to **Editing**)
+### 2. Model it
+In Desktop use Power Query and Model view; in web, open the semantic model → **Open semantic model** → switch to
+**Editing**.
 
 **Data types:** set `Date[Date]`, `Calls[call_date]`, `Interactions[call_date]`, `Forecast[forecast_date]` to *Date*.
 
@@ -109,12 +123,13 @@ Hide the key columns (`date_key`, `queue_id`, `employee_id`, `interaction_id`) i
 the comments, and set the format string shown. Optional tidy-up: *New table* → `_Measures = { BLANK() }`, hide its
 column, and keep all measures there.
 
-### 4. Turn on refresh
-Semantic model **Settings** → keep **OneDrive refresh** on (Power BI checks the file about hourly).
-For a fixed monthly cadence you can also add a **scheduled refresh** (credentials: OAuth2, organisational account).
-After running October, **Refresh now** if you don't want to wait.
+### 3. Refresh each month
+- **Desktop:** after `make refresh`, **Home → Refresh**.
+- **Web (Option B):** semantic model **Settings** → keep **OneDrive refresh** on (Power BI checks the file about
+  hourly). For a fixed monthly cadence you can also add a **scheduled refresh** (credentials: OAuth2, organisational
+  account). After running October, **Refresh now** if you don't want to wait.
 
-### 5. Build the report
+### 4. Build the report
 Suggested four pages. Every number comes from a measure, so all pages respond to the Month and Brand slicers.
 
 **1. Overview**
@@ -141,18 +156,8 @@ Suggested four pages. Every number comes from a measure, so all pages respond to
 - NPS Score and CSAT by `Queue[Brand]` and `Queue[Queue]`
 - Table: `Surveys[verbatim]`, `Surveys[csat]` filtered to CSAT ≤ 2 (what unhappy customers say)
 
-### 6. Share it
-- **File → Download this file** (.pbix) and commit it to `powerbi/` in the repo, plus screenshots to `docs/`.
+### 5. Share it
+- Save the .pbix (in web: **File → Download this file**) and commit it to `powerbi/` in the repo, plus screenshots
+  to `docs/`.
 - If your tenant allows external sharing, share the report link. Otherwise the repo, screenshots and .pbix are the
   hand-off.
-
----
-
-## Option B: Power BI Desktop (Windows)
-
-Either:
-- **Get data → Excel workbook** → `output/powerbi/contact_centre_model.xlsx`, then follow steps 3 and 5 above; or
-- **Get data → MySQL database** → server `localhost:3308`, database `contact_centre`. Import the tables
-  directly (the queries in `sql/exports/` show exactly what each model table contains).
-
-To use the finished report instead of building one, see [Using the included report](#using-the-included-report-contact_centrepbix) above.

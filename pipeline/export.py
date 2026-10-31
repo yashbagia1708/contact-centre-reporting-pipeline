@@ -2,7 +2,7 @@
 Outputs:
   1. Power BI model workbook  -> EXPORT_DIR/contact_centre_model.xlsx (one Excel table per model table)
      plus the same tables as CSV in EXPORT_DIR/csv/. Overwritten in place under the same name, so a
-     Power BI semantic model pointed at the OneDrive copy refreshes without being rebuilt.
+     Power BI semantic model pointed at it (locally, or a OneDrive copy) refreshes without being rebuilt.
   2. Monthly KPI pack         -> REPORT_DIR/Contact_Centre_KPI_Pack_<month>.xlsx (formatted, for email)
 """
 from __future__ import annotations
@@ -32,7 +32,7 @@ def _query(engine: Engine, path: Path, params: dict | None = None) -> pd.DataFra
 
 
 def _atomic_write(target: Path, writer) -> None:
-    """Write to a temp file in the same folder, then swap it in, so OneDrive never syncs a half-written file."""
+    """Write to a temp file in the same folder, then swap it in, so nothing ever reads a half-written file."""
     target.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp = tempfile.mkstemp(dir=target.parent, prefix=".tmp_", suffix=target.suffix)
     os.close(fd)

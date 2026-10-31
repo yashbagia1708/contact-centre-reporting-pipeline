@@ -28,7 +28,7 @@ class Settings:
     db_name: str = os.getenv("DB_NAME", "contact_centre")
 
     raw_dir: Path = _path("RAW_DIR", "data/raw")              # where monthly source drops land
-    export_dir: Path = _path("EXPORT_DIR", "output/powerbi")  # point at a OneDrive folder for Power BI
+    export_dir: Path = _path("EXPORT_DIR", "output/powerbi")  # read by Power BI (OneDrive folder for Power BI web)
     report_dir: Path = _path("REPORT_DIR", "output/reports")  # monthly KPI pack
     log_dir: Path = _path("LOG_DIR", "output/logs")
     reject_dir: Path = _path("REJECT_DIR", "output/rejects")
