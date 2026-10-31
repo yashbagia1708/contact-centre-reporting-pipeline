@@ -183,11 +183,11 @@ Other commands: `make refresh MONTH=2026-10` (reload a specific month), `make de
 
 | Output | Path | For |
 |---|---|---|
-| Power BI model | `output/powerbi/contact_centre_model.xlsx` (+ `csv/`) | The Power BI semantic model's source. Point `EXPORT_DIR` at OneDrive and Power BI web refreshes from it |
+| Power BI model | `output/powerbi/contact_centre_model.xlsx` (+ `csv/`) | The Power BI semantic model's source. The included report reads it through one `ModelFile` parameter |
 | KPI pack | `output/reports/Contact_Centre_KPI_Pack_YYYY-MM.xlsx` | Email-ready monthly report: summary vs last month, generated observations, detail tabs |
 | Data quality | `output/logs/dq_report_YYYY-MM.json`, `output/rejects/YYYY-MM/` | What was fixed, what was quarantined and why |
 
-Building the Power BI model from scratch instead (web on a Mac, or Desktop): [`powerbi/POWERBI_SETUP.md`](powerbi/POWERBI_SETUP.md).
+Building the Power BI model from scratch instead: [`powerbi/POWERBI_SETUP.md`](powerbi/POWERBI_SETUP.md).
 
 </details>
 
@@ -211,7 +211,7 @@ flowchart LR
         VW["Reporting views<br/>CTEs + window functions"]
     end
     subgraph Out["Outputs"]
-        PBI["contact_centre_model.xlsx<br/>(OneDrive) → Power BI<br/>DAX measures"]
+        PBI["contact_centre_model.xlsx<br/>→ Power BI<br/>DAX measures"]
         KPI["Monthly KPI pack<br/>formatted Excel"]
         DQ["DQ report + rejects"]
     end
@@ -231,7 +231,7 @@ flowchart LR
    use a month-partition swap (`DELETE` month → `INSERT`). Either the whole month lands or none of it does, and
    re-running a month never double counts (CI proves this on every push).
 4. **Export**: SQL in `sql/exports/` defines each Power BI table. The workbook is written to a temp file and swapped
-   in, so OneDrive never syncs a half-written file.
+   in, so Power BI never reads a half-written file.
 5. **Report**: the KPI pack is built from the reporting views, with month-on-month change and observations
    generated from the data.
 
@@ -289,12 +289,10 @@ a scheduled GitHub Action. In a production setting the source drops would arrive
 would be the warehouse (or swapped for Snowflake/SQL Server via the SQLAlchemy URL), and Power BI would refresh
 through a gateway or directly from the warehouse.
 
-**Why OneDrive in the demo.** Built on a Mac with Power BI web: the service can't reach a database on a laptop
-without an on-premises gateway, and the gateway is Windows-only. A workbook in OneDrive is reached cloud-to-cloud,
-so the pipeline writes `contact_centre_model.xlsx` there and the semantic model refreshes from it. Only the source
-step would change in a company's own Microsoft 365 tenant: the model would read the warehouse through a gateway, or the whole flow would
-run as a Microsoft Fabric pipeline, and the last pipeline step would call the Power BI REST API to refresh the model
-so nobody has to click Refresh.
+**Getting rid of the Refresh click.** In the demo, Power BI Desktop reads the model workbook and you click
+Refresh after the pipeline runs. In a company's Microsoft 365 tenant the model would read the warehouse through a
+gateway, or the whole flow would run as a Microsoft Fabric pipeline, and the last pipeline step would call the
+Power BI REST API to refresh the semantic model so nobody has to click Refresh.
 
 ## Project layout
 
